@@ -36,7 +36,7 @@ const FoodSearch = () => {
             {/* Arama Sonuçları */}
             {searchTerm && (
                 <div style={{
-                    maxHeight: '150px',
+                    maxHeight: '250px',
                     overflowY: 'auto',
                     background: 'rgba(15, 23, 42, 0.8)',
                     borderRadius: '12px',
