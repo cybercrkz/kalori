@@ -129,6 +129,36 @@ const FastingTimer = () => {
 
             {isFasting && (
                 <div style={{ marginBottom: '1.5rem' }}>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginBottom: '1rem',
+                        background: 'rgba(255,255,255,0.05)',
+                        padding: '0.8rem',
+                        borderRadius: '12px',
+                        fontSize: '0.9rem'
+                    }}>
+                        <div style={{ textAlign: 'left' }}>
+                            <div style={{ color: 'var(--text-muted)', marginBottom: '0.2rem' }}>Başlangıç</div>
+                            <div style={{ color: 'white', fontWeight: '600' }}>
+                                {new Date(startTime).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginLeft: '0.3rem' }}>
+                                    {new Date(startTime).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                                </span>
+                            </div>
+                        </div>
+                        <div style={{ width: '1px', background: 'rgba(255,255,255,0.1)' }}></div>
+                        <div style={{ textAlign: 'right' }}>
+                            <div style={{ color: 'var(--text-muted)', marginBottom: '0.2rem' }}>Bitiş (Tahmini)</div>
+                            <div style={{ color: '#f472b6', fontWeight: '600' }}>
+                                {new Date(startTime + goalSeconds * 1000).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginLeft: '0.3rem' }}>
+                                    {new Date(startTime + goalSeconds * 1000).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
                         <span>Geçen Süre</span>
                         <span>Hedef: {selectedMode} Saat</span>
@@ -138,7 +168,6 @@ const FastingTimer = () => {
                     </div>
                 </div>
             )}
-
             <button
                 onClick={toggleFasting}
                 style={{
