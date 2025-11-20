@@ -4,12 +4,27 @@ const FastingTimer = () => {
     const [isFasting, setIsFasting] = useState(false);
     const [startTime, setStartTime] = useState(null);
     const [elapsed, setElapsed] = useState(0);
+    const [selectedMode, setSelectedMode] = useState(16); // Varsayılan 16 saat
 
-    // 16 Saatlik hedef (saniye cinsinden)
-    const goalSeconds = 16 * 60 * 60;
+    const modes = [
+        { hours: 14, label: '14:10 (Başlangıç)' },
+        { hours: 16, label: '16:8 (Standart)' },
+        { hours: 18, label: '18:6 (İleri)' },
+        { hours: 20, label: '20:4 (Savaşçı)' },
+        { hours: 24, label: '24 Saat (Tam Gün)' },
+    ];
+
+    // Seçilen moda göre hedef saniye
+    const goalSeconds = selectedMode * 60 * 60;
 
     useEffect(() => {
         const savedStart = localStorage.getItem('fastingStart');
+        const savedMode = localStorage.getItem('fastingMode');
+
+        if (savedMode) {
+            setSelectedMode(parseInt(savedMode));
+        }
+
         if (savedStart) {
             setStartTime(parseInt(savedStart));
             setIsFasting(true);
@@ -29,16 +44,27 @@ const FastingTimer = () => {
 
     const toggleFasting = () => {
         if (isFasting) {
-            setIsFasting(false);
-            setStartTime(null);
-            setElapsed(0);
-            localStorage.removeItem('fastingStart');
+            if (window.confirm('Orucu sonlandırmak istediğine emin misin?')) {
+                setIsFasting(false);
+                setStartTime(null);
+                setElapsed(0);
+                localStorage.removeItem('fastingStart');
+            }
         } else {
             const now = Date.now();
             setStartTime(now);
             setIsFasting(true);
             localStorage.setItem('fastingStart', now.toString());
+            localStorage.setItem('fastingMode', selectedMode.toString());
         }
+    };
+
+    const handleModeChange = (hours) => {
+        if (isFasting) {
+            alert('Oruç devam ederken mod değiştiremezsin. Önce orucu bitir.');
+            return;
+        }
+        setSelectedMode(hours);
     };
 
     const formatTime = (seconds) => {
@@ -59,7 +85,37 @@ const FastingTimer = () => {
             textAlign: 'center',
             border: '1px solid var(--border-color)'
         }}>
-            <h3 style={{ color: '#f472b6', marginBottom: '1rem' }}>Aralıklı Oruç (16:8) 🌙</h3>
+            <h3 style={{ color: '#f472b6', marginBottom: '1rem' }}>Aralıklı Oruç 🌙</h3>
+
+            {/* Mod Seçimi */}
+            <div style={{
+                display: 'flex',
+                gap: '0.5rem',
+                overflowX: 'auto',
+                paddingBottom: '1rem',
+                marginBottom: '1rem',
+                justifyContent: 'flex-start' // Mobilde kaydırma için
+            }}>
+                {modes.map(mode => (
+                    <button
+                        key={mode.hours}
+                        onClick={() => handleModeChange(mode.hours)}
+                        style={{
+                            padding: '0.5rem 1rem',
+                            borderRadius: '8px',
+                            border: selectedMode === mode.hours ? '1px solid #f472b6' : '1px solid rgba(255,255,255,0.1)',
+                            background: selectedMode === mode.hours ? 'rgba(244, 114, 182, 0.2)' : 'transparent',
+                            color: selectedMode === mode.hours ? '#f472b6' : 'var(--text-muted)',
+                            cursor: isFasting ? 'not-allowed' : 'pointer',
+                            fontSize: '0.8rem',
+                            whiteSpace: 'nowrap',
+                            opacity: isFasting && selectedMode !== mode.hours ? 0.5 : 1
+                        }}
+                    >
+                        {mode.label}
+                    </button>
+                ))}
+            </div>
 
             <div style={{
                 fontSize: '3rem',
@@ -75,7 +131,7 @@ const FastingTimer = () => {
                 <div style={{ marginBottom: '1.5rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
                         <span>Geçen Süre</span>
-                        <span>Hedef: 16 Saat</span>
+                        <span>Hedef: {selectedMode} Saat</span>
                     </div>
                     <div style={{ height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
                         <div style={{ height: '100%', width: `${progress}%`, background: '#f472b6', transition: 'width 1s linear' }} />
