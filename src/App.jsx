@@ -8,6 +8,7 @@ import WaterTracker from './components/WaterTracker';
 import FoodSearch from './components/FoodSearch';
 import FastingTimer from './components/FastingTimer';
 import ExportButton from './components/ExportButton';
+import FoodIntakeCard from './components/FoodIntakeCard';
 import { calculateBMR, calculateTDEE, calculateGoals, calculateBMI, getBMICategory, calculateIdealWeightRange, getWeightDifferenceMessage, calculateMacros, getDietPlan } from './utils/calorieCalculator';
 
 function App() {
@@ -15,12 +16,18 @@ function App() {
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
   const [userWeight, setUserWeight] = useState(null);
+  const [selectedFoods, setSelectedFoods] = useState([]);
 
-  // Uygulama açıldığında geçmişi yükle
+  // Uygulama açıldığında geçmişi ve yemekleri yükle
   useEffect(() => {
     const savedHistory = localStorage.getItem('calorieHistory');
     if (savedHistory) {
       setHistory(JSON.parse(savedHistory));
+    }
+
+    const savedFoods = localStorage.getItem('selectedFoods');
+    if (savedFoods) {
+      setSelectedFoods(JSON.parse(savedFoods));
     }
   }, []);
 
@@ -146,18 +153,20 @@ function App() {
         <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
           <WaterTracker weight={userWeight} />
           <FastingTimer />
-          <FoodSearch />
+          <FoodSearch selectedFoods={selectedFoods} setSelectedFoods={setSelectedFoods} />
         </div>
       )}
 
       {activeTab === 'analysis' && (
         <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
           <WeightChart history={history} />
+          <FoodIntakeCard selectedFoods={selectedFoods} />
           <HistoryList history={history} onClear={clearHistory} />
         </div>
       )}
 
-      <ExportButton result={result} history={history} userWeight={userWeight} />
+
+      <ExportButton result={result} history={history} userWeight={userWeight} selectedFoods={selectedFoods} />
     </div>
   );
 }

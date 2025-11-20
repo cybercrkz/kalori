@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { foods } from '../data/foods';
 
-const FoodSearch = () => {
+const FoodSearch = ({ selectedFoods, setSelectedFoods }) => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedFoods, setSelectedFoods] = useState([]);
+
+    // LocalStorage'a kaydet
+    useEffect(() => {
+        localStorage.setItem('selectedFoods', JSON.stringify(selectedFoods));
+    }, [selectedFoods]);
 
     const filteredFoods = foods.filter(food =>
         food.name.toLowerCase().includes(searchTerm.toLowerCase())

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-const ExportButton = ({ result, history, userWeight }) => {
+const ExportButton = ({ result, history, userWeight, selectedFoods = [] }) => {
     const [isHovered, setIsHovered] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
 
@@ -297,6 +297,56 @@ const ExportButton = ({ result, history, userWeight }) => {
                     body: historyBody,
                     theme: 'striped',
                     headStyles: { fillColor: colors.primary },
+                    styles: { fontSize: 9, cellPadding: 6 }
+                });
+            }
+
+            // --- YEMEK ALIMI (Eğer varsa) ---
+            if (selectedFoods && selectedFoods.length > 0) {
+                const totalFoodCalories = selectedFoods.reduce((sum, food) => sum + food.calories, 0);
+                const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 20 : yPos + 20;
+
+                // Eğer sayfa sonuna yaklaştıysa yeni sayfa
+                if (finalY > pageHeight - 60) {
+                    doc.addPage();
+                    drawHeader();
+                    yPos = 80;
+                } else {
+                    yPos = finalY;
+                }
+
+                doc.setFontSize(14);
+                doc.setTextColor(...colors.dark);
+                doc.text(normalizeText('Bugün Ne Yedim?'), margin, yPos);
+
+                // Toplam Kalori Kartı
+                doc.setFillColor(...colors.light);
+                doc.roundedRect(margin, yPos + 10, pageWidth - margin * 2, 30, 4, 4, 'F');
+
+                doc.setFontSize(10);
+                doc.setTextColor(...colors.textLight);
+                doc.text(normalizeText('Toplam Kalori Alımı'), margin + 10, yPos + 22);
+
+                doc.setFontSize(18);
+                doc.setTextColor(...colors.dark);
+                doc.setFont(fontName, 'bold');
+                doc.text(`${totalFoodCalories} kcal`, margin + 10, yPos + 35);
+
+                yPos += 50;
+
+                // Yemek Listesi
+                const foodBody = selectedFoods.map(food => [
+                    normalizeText(food.name),
+                    `${food.calories} kcal`
+                ]);
+
+                autoTable(doc, {
+                    styles: { font: fontName },
+                    startY: yPos,
+                    head: [[normalizeText('Yemek'), normalizeText('Kalori')]],
+                    body: foodBody,
+                    theme: 'striped',
+                    headStyles: { fillColor: colors.secondary },
                     styles: { fontSize: 9, cellPadding: 6 }
                 });
             }
