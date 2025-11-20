@@ -4,22 +4,10 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 const WeightChart = ({ history }) => {
     const [showBMI, setShowBMI] = useState(false);
 
-    if (!history || history.length < 2) return (
-        <div style={{
-            textAlign: 'center',
-            padding: '3rem',
-            color: 'var(--text-muted)',
-            background: 'rgba(255,255,255,0.02)',
-            borderRadius: '24px',
-            border: '1px dashed var(--border-color)'
-        }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📊</div>
-            <div>Analiz için en az 2 ölçüm yapmalısın.</div>
-        </div>
-    );
-
     // Veriyi hazırla
     const data = useMemo(() => {
+        if (!history || history.length === 0) return [];
+
         return [...history].reverse()
             .map(item => {
                 // Eğer Kilo modu seçiliyse ve kilo verisi yoksa, bu kaydı atla (veya null döndür filter ile temizle)
@@ -33,6 +21,20 @@ const WeightChart = ({ history }) => {
             })
             .filter(item => item !== null); // Null olanları temizle
     }, [history, showBMI]);
+
+    if (!history || history.length < 2) return (
+        <div style={{
+            textAlign: 'center',
+            padding: '3rem',
+            color: 'var(--text-muted)',
+            background: 'rgba(255,255,255,0.02)',
+            borderRadius: '24px',
+            border: '1px dashed var(--border-color)'
+        }}>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📊</div>
+            <div>{history && history.length === 0 ? 'Henüz geçmiş verisi yok.' : 'Grafik için en az 2 ölçüm yapmalısın.'}</div>
+        </div>
+    );
 
     if (data.length === 0) {
         return (
