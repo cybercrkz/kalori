@@ -65,6 +65,7 @@ function App() {
       date: new Date().toLocaleDateString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
       tdee,
       bmi,
+      weight, // Kilo verisini ekle
       bmiCategory: bmiCategory.label
     };
 
@@ -156,7 +157,7 @@ function App() {
         </div>
       )}
 
-      <ExportButton targetId="app-content" />
+      <ExportButton result={result} history={history} userWeight={userWeight} />
     </div>
   );
 }
