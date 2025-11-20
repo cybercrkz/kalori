@@ -4,11 +4,17 @@ import ResultCard from './components/ResultCard';
 import HistoryList from './components/HistoryList';
 import DietList from './components/DietList';
 import WeightChart from './components/WeightChart';
+import WaterTracker from './components/WaterTracker';
+import FoodSearch from './components/FoodSearch';
+import FastingTimer from './components/FastingTimer';
+import ExportButton from './components/ExportButton';
 import { calculateBMR, calculateTDEE, calculateGoals, calculateBMI, getBMICategory, calculateIdealWeightRange, getWeightDifferenceMessage, calculateMacros, getDietPlan } from './utils/calorieCalculator';
 
 function App() {
+  const [activeTab, setActiveTab] = useState('calculator');
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
+  const [userWeight, setUserWeight] = useState(null);
 
   // Uygulama açıldığında geçmişi yükle
   useEffect(() => {
@@ -22,6 +28,8 @@ function App() {
     const weight = parseFloat(data.weight);
     const height = parseFloat(data.height);
     const age = parseFloat(data.age);
+
+    setUserWeight(weight); // Su takibi için kiloyu sakla
 
     const bmr = calculateBMR(data.gender, weight, height, age);
     const tdee = calculateTDEE(bmr, data.activityLevel);
@@ -60,7 +68,7 @@ function App() {
       bmiCategory: bmiCategory.label
     };
 
-    const updatedHistory = [newHistoryItem, ...history].slice(0, 10); // Son 10 kaydı tut (Grafik için artırdık)
+    const updatedHistory = [newHistoryItem, ...history].slice(0, 10);
     setHistory(updatedHistory);
     localStorage.setItem('calorieHistory', JSON.stringify(updatedHistory));
   };
@@ -71,19 +79,84 @@ function App() {
   };
 
   return (
-    <div className="container">
+    <div className="container" id="app-content">
       <h1>Kalori Hesaplayıcı 🥗</h1>
-      <CalorieForm onCalculate={handleCalculate} />
 
-      {result && (
-        <>
-          <ResultCard tdee={result.tdee} goals={result.goals} />
-          <DietList dietPlan={result.goals.dietPlan} macros={result.goals.macros} />
-        </>
+      {/* Sekmeler */}
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', background: 'rgba(15, 23, 42, 0.5)', padding: '0.5rem', borderRadius: '12px' }}>
+        <button
+          onClick={() => setActiveTab('calculator')}
+          style={{
+            flex: 1,
+            padding: '0.75rem',
+            background: activeTab === 'calculator' ? 'var(--primary-color)' : 'transparent',
+            color: activeTab === 'calculator' ? 'white' : 'var(--text-muted)',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontWeight: '600',
+            transition: 'all 0.2s'
+          }}
+        >Hesaplayıcı</button>
+        <button
+          onClick={() => setActiveTab('tools')}
+          style={{
+            flex: 1,
+            padding: '0.75rem',
+            background: activeTab === 'tools' ? 'var(--primary-color)' : 'transparent',
+            color: activeTab === 'tools' ? 'white' : 'var(--text-muted)',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontWeight: '600',
+            transition: 'all 0.2s'
+          }}
+        >Araçlar</button>
+        <button
+          onClick={() => setActiveTab('analysis')}
+          style={{
+            flex: 1,
+            padding: '0.75rem',
+            background: activeTab === 'analysis' ? 'var(--primary-color)' : 'transparent',
+            color: activeTab === 'analysis' ? 'white' : 'var(--text-muted)',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontWeight: '600',
+            transition: 'all 0.2s'
+          }}
+        >Analiz</button>
+      </div>
+
+      {/* İçerik */}
+      {activeTab === 'calculator' && (
+        <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+          <CalorieForm onCalculate={handleCalculate} />
+          {result && (
+            <>
+              <ResultCard tdee={result.tdee} goals={result.goals} />
+              <DietList dietPlan={result.goals.dietPlan} macros={result.goals.macros} />
+            </>
+          )}
+        </div>
       )}
 
-      <WeightChart history={history} />
-      <HistoryList history={history} onClear={clearHistory} />
+      {activeTab === 'tools' && (
+        <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+          <WaterTracker weight={userWeight} />
+          <FastingTimer />
+          <FoodSearch />
+        </div>
+      )}
+
+      {activeTab === 'analysis' && (
+        <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+          <WeightChart history={history} />
+          <HistoryList history={history} onClear={clearHistory} />
+        </div>
+      )}
+
+      <ExportButton targetId="app-content" />
     </div>
   );
 }
