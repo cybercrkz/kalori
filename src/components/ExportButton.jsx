@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-const ExportButton = ({ result, history, userWeight, selectedFoods = [] }) => {
+const ExportButton = ({ result, history, userWeight, selectedFoods = [], selectedGoal }) => {
     const [isHovered, setIsHovered] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
 
@@ -144,6 +144,27 @@ const ExportButton = ({ result, history, userWeight, selectedFoods = [] }) => {
             doc.text(`${waterTarget} ml`, rightColX + 15, yPos + 45); // Altına yaz
 
             yPos += 65;
+
+            // YENİ KART: Seçilen Hedef
+            doc.setFillColor(...colors.light);
+            doc.roundedRect(margin, yPos, pageWidth - margin * 2, 40, 4, 4, 'F');
+
+            doc.setFontSize(10);
+            doc.setTextColor(...colors.textLight);
+            doc.text(normalizeText('SEÇİLEN HEDEF'), margin + 15, yPos + 15);
+
+            let goalText = 'Kilo Korumak';
+            if (selectedGoal) {
+                if (selectedGoal.includes('Loss')) goalText = 'Kilo Vermek';
+                else if (selectedGoal.includes('Gain')) goalText = 'Kilo Almak';
+            }
+
+            doc.setFontSize(16);
+            doc.setTextColor(...colors.secondary);
+            doc.setFont(fontName, 'bold');
+            doc.text(normalizeText(goalText), margin + 15, yPos + 30);
+
+            yPos += 55;
 
             // BMI GÖSTERGESİ
             doc.setFontSize(14);
@@ -287,13 +308,14 @@ const ExportButton = ({ result, history, userWeight, selectedFoods = [] }) => {
                     item.weight ? `${item.weight} kg` : '-',
                     item.bmi,
                     normalizeText(item.bmiCategory),
+                    normalizeText(item.goal === 'maintain' ? 'Koru' : (item.goal && item.goal.includes('Loss') ? 'Ver' : (item.goal && item.goal.includes('Gain') ? 'Al' : '-'))),
                     `${item.tdee} kcal`
                 ]);
 
                 autoTable(doc, {
                     styles: { font: fontName },
                     startY: yPos + 10,
-                    head: [[normalizeText('Tarih'), normalizeText('Kilo'), 'BMI', normalizeText('Durum'), normalizeText('Kalori')]],
+                    head: [[normalizeText('Tarih'), normalizeText('Kilo'), 'BMI', normalizeText('Durum'), normalizeText('Hedef'), normalizeText('Kalori')]],
                     body: historyBody,
                     theme: 'striped',
                     headStyles: { fillColor: colors.primary },

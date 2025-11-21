@@ -90,6 +90,20 @@ const HistoryList = ({ history, onClear }) => {
                                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
                                     BMI: {item.bmi}
                                 </div>
+                                {item.goal && (
+                                    <div style={{
+                                        fontSize: '0.75rem',
+                                        color: 'var(--secondary-color)',
+                                        marginTop: '0.2rem',
+                                        background: 'rgba(236, 72, 153, 0.1)',
+                                        padding: '2px 6px',
+                                        borderRadius: '4px',
+                                        display: 'inline-block'
+                                    }}>
+                                        {item.goal === 'maintain' ? 'Koru' :
+                                            item.goal.includes('Loss') ? 'Ver' : 'Al'}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     );

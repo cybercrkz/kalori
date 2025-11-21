@@ -76,7 +76,8 @@ function App() {
       tdee,
       bmi,
       weight, // Kilo verisini ekle
-      bmiCategory: bmiCategory.label
+      bmiCategory: bmiCategory.label,
+      goal: 'maintain' // Varsayılan hedef
     };
 
     const updatedHistory = [newHistoryItem, ...history].slice(0, 10);
@@ -106,6 +107,14 @@ function App() {
           dietPlan: newDietPlan
         }
       }));
+
+      // Geçmişteki son kaydı güncelle
+      if (history.length > 0) {
+        const updatedHistory = [...history];
+        updatedHistory[0] = { ...updatedHistory[0], goal: goalKey };
+        setHistory(updatedHistory);
+        localStorage.setItem('calorieHistory', JSON.stringify(updatedHistory));
+      }
     }
   };
 
