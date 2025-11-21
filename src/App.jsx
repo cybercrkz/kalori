@@ -17,6 +17,7 @@ function App() {
   const [history, setHistory] = useState([]);
   const [userWeight, setUserWeight] = useState(null);
   const [selectedFoods, setSelectedFoods] = useState([]);
+  const [selectedGoal, setSelectedGoal] = useState('maintain');
 
   // Uygulama açıldığında geçmişi ve yemekleri yükle
   useEffect(() => {
@@ -52,7 +53,9 @@ function App() {
 
     // Makro ve Diyet Planı
     const macros = calculateMacros(tdee);
-    const dietPlan = getDietPlan(tdee);
+    const dietPlan = getDietPlan(tdee, 'maintain'); // İlk hesaplamada varsayılan: maintain
+
+    setSelectedGoal('maintain'); // Hesaplama yapılınca varsayılana dön
 
     goals = {
       ...goals,
@@ -84,6 +87,26 @@ function App() {
   const clearHistory = () => {
     setHistory([]);
     localStorage.removeItem('calorieHistory');
+  };
+
+  const handleGoalSelect = (goalKey) => {
+    setSelectedGoal(goalKey);
+    if (result) {
+      let menuType = 'maintain';
+      if (goalKey.toLowerCase().includes('loss')) menuType = 'lose';
+      if (goalKey.toLowerCase().includes('gain')) menuType = 'gain';
+
+      const targetCalories = result.goals[goalKey];
+      const newDietPlan = getDietPlan(targetCalories, menuType);
+
+      setResult(prev => ({
+        ...prev,
+        goals: {
+          ...prev.goals,
+          dietPlan: newDietPlan
+        }
+      }));
+    }
   };
 
   return (
@@ -142,7 +165,12 @@ function App() {
           <CalorieForm onCalculate={handleCalculate} />
           {result && (
             <>
-              <ResultCard tdee={result.tdee} goals={result.goals} />
+              <ResultCard
+                tdee={result.tdee}
+                goals={result.goals}
+                selectedGoal={selectedGoal}
+                onGoalSelect={handleGoalSelect}
+              />
               <DietList dietPlan={result.goals.dietPlan} macros={result.goals.macros} />
             </>
           )}

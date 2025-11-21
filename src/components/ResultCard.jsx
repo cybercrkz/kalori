@@ -1,6 +1,14 @@
 import React from 'react';
 
-const ResultCard = ({ tdee, goals }) => {
+const ResultCard = ({ tdee, goals, selectedGoal, onGoalSelect }) => {
+    const getStyle = (goalKey) => ({
+        cursor: 'pointer',
+        border: selectedGoal === goalKey ? '2px solid var(--primary-color)' : '1px solid transparent',
+        background: selectedGoal === goalKey ? 'rgba(59, 130, 246, 0.1)' : 'rgba(255, 255, 255, 0.05)',
+        transform: selectedGoal === goalKey ? 'scale(1.02)' : 'scale(1)',
+        transition: 'all 0.2s ease'
+    });
+
     return (
         <div className="result-card">
             <div className="result-header">
@@ -59,32 +67,52 @@ const ResultCard = ({ tdee, goals }) => {
                 </div>
 
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '1rem' }}>
-                    Mevcut kilonu korumak için alman gereken miktar
+                    Hedefinize uygun menüyü görmek için aşağıdaki seçeneklerden birine tıklayın.
                 </p>
             </div>
 
             <div className="goals-grid">
-                <div className="goal-item highlight">
+                <div
+                    className="goal-item"
+                    style={getStyle('maintain')}
+                    onClick={() => onGoalSelect('maintain')}
+                >
                     <span className="goal-label">Kilo Korumak</span>
                     <span className="goal-value">{goals.maintain} kcal</span>
                 </div>
 
-                <div className="goal-item">
+                <div
+                    className="goal-item"
+                    style={getStyle('mildWeightLoss')}
+                    onClick={() => onGoalSelect('mildWeightLoss')}
+                >
                     <span className="goal-label">Hafif Kilo Ver (-0.25kg)</span>
                     <span className="goal-value">{goals.mildWeightLoss} kcal</span>
                 </div>
 
-                <div className="goal-item">
+                <div
+                    className="goal-item"
+                    style={getStyle('weightLoss')}
+                    onClick={() => onGoalSelect('weightLoss')}
+                >
                     <span className="goal-label">Kilo Ver (-0.5kg)</span>
                     <span className="goal-value">{goals.weightLoss} kcal</span>
                 </div>
 
-                <div className="goal-item">
+                <div
+                    className="goal-item"
+                    style={getStyle('extremeWeightLoss')}
+                    onClick={() => onGoalSelect('extremeWeightLoss')}
+                >
                     <span className="goal-label">Hızlı Kilo Ver (-1kg)</span>
                     <span className="goal-value">{goals.extremeWeightLoss} kcal</span>
                 </div>
 
-                <div className="goal-item">
+                <div
+                    className="goal-item"
+                    style={getStyle('weightGain')}
+                    onClick={() => onGoalSelect('weightGain')}
+                >
                     <span className="goal-label">Kilo Al (+0.5kg)</span>
                     <span className="goal-value">{goals.weightGain} kcal</span>
                 </div>

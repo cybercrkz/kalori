@@ -100,7 +100,7 @@ export const calculateMacros = (tdee) => {
 /**
  * Kaloriye göre örnek diyet listesi döndürür.
  */
-export const getDietPlan = (tdee) => {
+export const getDietPlan = (tdee, goalType = 'maintain') => {
     const plan = {
         breakfast: [],
         lunch: [],
@@ -108,21 +108,55 @@ export const getDietPlan = (tdee) => {
         dinner: []
     };
 
-    if (tdee < 1800) {
-        plan.breakfast = ["Yulaf Ezmesi (Süt/Yoğurt ile)", "veya Haşlanmış Yumurta", "Yeşil Çay"];
-        plan.lunch = ["Ton Balıklı Salata (Konserve)", "veya Peynirli Kepekli Sandviç", "Ayran"];
-        plan.snack = ["1 Yeşil Elma", "10 Çiğ Badem"];
-        plan.dinner = ["Izgara/Tava Tavuk Göğsü", "Hazır Salata", "1 Dilim Ekmek"];
-    } else if (tdee < 2500) {
-        plan.breakfast = ["Beyaz Peynirli Tost", "veya Simit + Ayran", "Domates/Salatalık"];
-        plan.lunch = ["Tavuklu/Köfteli Salata", "veya Ev Yemeği (Isıt-Ye)", "1 Kase Yoğurt"];
-        plan.snack = ["1 Muz", "Sütlü Kahve"];
-        plan.dinner = ["Kıymalı Makarna", "veya Tavuk Sote + Bulgur", "Mevsim Salatası"];
+    // Hedefe göre kalori ayarlaması (Menü içeriği için mantıksal ayrım)
+    // maintain: Dengeli
+    // lose: Düşük karbonhidrat, yüksek hacim (sebze vb.)
+    // gain: Yüksek karbonhidrat, yüksek protein
+
+    if (goalType === 'lose') {
+        // Kilo Verme Odaklı (Daha hafif, sebze ağırlıklı)
+        if (tdee < 1800) {
+            plan.breakfast = ["Haşlanmış Yumurta (2 adet)", "Bol Yeşillik", "Şekersiz Çay"];
+            plan.lunch = ["Ton Balıklı Salata (Yağsız)", "1 Dilim Ekmek", "Limonlu Su"];
+            plan.snack = ["1 Yeşil Elma", "Salatalık Dilimleri"];
+            plan.dinner = ["Izgara Tavuk Göğsü", "Buharda Sebze", "Yoğurt"];
+        } else {
+            plan.breakfast = ["Menemen (Az yağlı)", "1 Dilim Tam Buğday Ekmeği", "Yeşil Çay"];
+            plan.lunch = ["Izgara Köfte (3 adet)", "Bol Salata", "Ayran"];
+            plan.snack = ["1 Kase Yoğurt", "Yulaf Ezmesi"];
+            plan.dinner = ["Zeytinyağlı Sebze Yemeği", "Cacık", "1 Dilim Ekmek"];
+        }
+    } else if (goalType === 'gain') {
+        // Kilo Alma/Kas Odaklı (Protein ve Karbonhidrat ağırlıklı)
+        if (tdee < 2500) {
+            plan.breakfast = ["3 Yumurtalı Kaşarlı Omlet", "2 Dilim Ekmek", "Süt", "Bal"];
+            plan.lunch = ["Tavuk Sote", "Pirinç Pilavı (Bol)", "Yoğurt"];
+            plan.snack = ["Muz", "Fıstık Ezmesi", "Süt"];
+            plan.dinner = ["Kıymalı Makarna", "Mercimek Çorbası", "Salata"];
+        } else {
+            plan.breakfast = ["Sucuklu Yumurta", "Simit", "Peynir Tabağı", "Meyve Suyu"];
+            plan.lunch = ["İskender veya Et Döner", "Pilav", "Ayran"];
+            plan.snack = ["Protein Shake", "Kuruyemiş (Ceviz/Badem)", "Kuru Meyve"];
+            plan.dinner = ["Biftek/Antrikot", "Fırın Patates", "Pirinç Pilavı"];
+        }
     } else {
-        plan.breakfast = ["3 Yumurtalı Omlet", "veya Büyük Karışık Tost", "Meyve Suyu"];
-        plan.lunch = ["Tavuk Pilav (Klasik)", "veya Büyük Boy Sandviç", "Ayran"];
-        plan.snack = ["Protein Bar", "Kuruyemiş Paketi", "Muz"];
-        plan.dinner = ["Etli Yemek (Biftek/Köfte)", "Makarna veya Pilav", "Bol Salata + Yoğurt"];
+        // Kilo Koruma / Dengeli (Mevcut Pratik Menü)
+        if (tdee < 1800) {
+            plan.breakfast = ["Yulaf Ezmesi (Süt/Yoğurt ile)", "veya Haşlanmış Yumurta", "Yeşil Çay"];
+            plan.lunch = ["Ton Balıklı Salata (Konserve)", "veya Peynirli Kepekli Sandviç", "Ayran"];
+            plan.snack = ["1 Yeşil Elma", "10 Çiğ Badem"];
+            plan.dinner = ["Izgara/Tava Tavuk Göğsü", "Hazır Salata", "1 Dilim Ekmek"];
+        } else if (tdee < 2500) {
+            plan.breakfast = ["Beyaz Peynirli Tost", "veya Simit + Ayran", "Domates/Salatalık"];
+            plan.lunch = ["Tavuklu/Köfteli Salata", "veya Ev Yemeği (Isıt-Ye)", "1 Kase Yoğurt"];
+            plan.snack = ["1 Muz", "Sütlü Kahve"];
+            plan.dinner = ["Kıymalı Makarna", "veya Tavuk Sote + Bulgur", "Mevsim Salatası"];
+        } else {
+            plan.breakfast = ["3 Yumurtalı Omlet", "veya Büyük Karışık Tost", "Meyve Suyu"];
+            plan.lunch = ["Tavuk Pilav (Klasik)", "veya Büyük Boy Sandviç", "Ayran"];
+            plan.snack = ["Protein Bar", "Kuruyemiş Paketi", "Muz"];
+            plan.dinner = ["Etli Yemek (Biftek/Köfte)", "Makarna veya Pilav", "Bol Salata + Yoğurt"];
+        }
     }
 
     return plan;
