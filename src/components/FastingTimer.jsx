@@ -1,5 +1,62 @@
 import React, { useState, useEffect } from 'react';
 
+
+const fastingStages = [
+    { min: 0, max: 4, title: 'Sindirim & Kan Şekeri', desc: 'Vücudun son yediğin yemeği sindiriyor ve kan şekerin yükseliyor.', icon: '🍽️', color: '#60a5fa' },
+    { min: 4, max: 8, title: 'Kan Şekeri Düşüşü', desc: 'Kan şekerin normale dönüyor, insülin seviyesi düşmeye başlıyor.', icon: '📉', color: '#34d399' },
+    { min: 8, max: 12, title: 'Sindirim Tamamlandı', desc: 'Miden tamamen boşaldı. Vücudun artık açlık moduna giriyor.', icon: '🛑', color: '#fbbf24' },
+    { min: 12, max: 14, title: 'Yağ Yakımı Başlıyor', desc: 'Büyüme hormonu artıyor, vücudun enerji için yağ depolarını kullanmaya başlıyor.', icon: '🔥', color: '#f87171' },
+    { min: 14, max: 16, title: 'Ketozis Başlangıcı', desc: 'Vücudun ana enerji kaynağı olarak yağları kullanıyor. Zihinsel odaklanma artabilir.', icon: '🧠', color: '#a78bfa' },
+    { min: 16, max: 18, title: 'Otofaji (Hücresel Temizlik)', desc: 'Hücrelerin hasarlı parçaları temizleniyor ve yenileniyor. Gençleşme etkisi!', icon: '✨', color: '#c084fc' },
+    { min: 18, max: 72, title: 'Zirve Büyüme Hormonu', desc: 'Büyüme hormonu seviyesi zirveye ulaşıyor. Kas koruması ve yağ yakımı maksimumda.', icon: '🚀', color: '#f472b6' }
+];
+
+const FastingStatus = ({ elapsed }) => {
+    const hours = elapsed / 3600;
+    const currentStage = fastingStages.find(stage => hours >= stage.min && hours < stage.max) || fastingStages[fastingStages.length - 1];
+
+    // Bir sonraki aşamaya kalan süre
+    const nextStage = fastingStages.find(stage => stage.min > hours);
+    let timeToNext = null;
+    if (nextStage) {
+        const secondsToNext = (nextStage.min * 3600) - elapsed;
+        const h = Math.floor(secondsToNext / 3600);
+        const m = Math.floor((secondsToNext % 3600) / 60);
+        timeToNext = `${h}sa ${m}dk`;
+    }
+
+    return (
+        <div style={{
+            background: `rgba(255, 255, 255, 0.05)`,
+            borderLeft: `4px solid ${currentStage.color}`,
+            borderRadius: '12px',
+            padding: '1rem',
+            textAlign: 'left',
+            animation: 'fadeIn 0.5s ease-out'
+        }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.5rem' }}>
+                <span style={{ fontSize: '1.5rem' }}>{currentStage.icon}</span>
+                <div>
+                    <div style={{ color: currentStage.color, fontWeight: 'bold', fontSize: '0.95rem' }}>
+                        {currentStage.title}
+                    </div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                        {Math.floor(hours)} saattir bu evredesin
+                    </div>
+                </div>
+            </div>
+            <p style={{ color: 'var(--text-color)', fontSize: '0.9rem', margin: 0, lineHeight: '1.4' }}>
+                {currentStage.desc}
+            </p>
+            {timeToNext && (
+                <div style={{ marginTop: '0.8rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    Sonraki evreye: <span style={{ color: 'white' }}>{timeToNext}</span>
+                </div>
+            )}
+        </div>
+    );
+};
+
 const FastingTimer = () => {
     const [isFasting, setIsFasting] = useState(false);
     const [startTime, setStartTime] = useState(null);
@@ -163,9 +220,12 @@ const FastingTimer = () => {
                         <span>Geçen Süre</span>
                         <span>Hedef: {selectedMode} Saat</span>
                     </div>
-                    <div style={{ height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden', marginBottom: '1.5rem' }}>
                         <div style={{ height: '100%', width: `${progress}%`, background: '#f472b6', transition: 'width 1s linear' }} />
                     </div>
+
+                    {/* Vücut Durumu Bildirimi */}
+                    <FastingStatus elapsed={elapsed} />
                 </div>
             )}
             <button
