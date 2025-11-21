@@ -180,7 +180,13 @@ function App() {
                 selectedGoal={selectedGoal}
                 onGoalSelect={handleGoalSelect}
               />
-              <DietList dietPlan={result.goals.dietPlan} macros={result.goals.macros} />
+              <DietList
+                dietPlan={result.goals.dietPlan}
+                macros={result.goals.macros}
+                bmi={result.goals.bmi}
+                bmiLabel={result.goals.bmiLabel}
+                bmiColor={result.goals.bmiColor}
+              />
             </>
           )}
         </div>
