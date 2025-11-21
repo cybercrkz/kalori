@@ -109,20 +109,20 @@ export const getDietPlan = (tdee) => {
     };
 
     if (tdee < 1800) {
-        plan.breakfast = ["2 Haşlanmış Yumurta", "1 Dilim Tam Buğday Ekmeği", "Domates, Salatalık", "Şekersiz Çay"];
-        plan.lunch = ["Izgara Tavuk Göğsü (100g)", "Mevsim Salatası", "1 Kase Yoğurt"];
-        plan.snack = ["1 Adet Yeşil Elma", "10 Adet Çiğ Badem"];
-        plan.dinner = ["Zeytinyağlı Sebze Yemeği", "1 Dilim Ekmek", "Cacık"];
+        plan.breakfast = ["Yulaf Ezmesi (Süt/Yoğurt ile)", "veya Haşlanmış Yumurta", "Yeşil Çay"];
+        plan.lunch = ["Ton Balıklı Salata (Konserve)", "veya Peynirli Kepekli Sandviç", "Ayran"];
+        plan.snack = ["1 Yeşil Elma", "10 Çiğ Badem"];
+        plan.dinner = ["Izgara/Tava Tavuk Göğsü", "Hazır Salata", "1 Dilim Ekmek"];
     } else if (tdee < 2500) {
-        plan.breakfast = ["Menemen (2 Yumurta)", "2 Dilim Tam Buğday Ekmeği", "5 Zeytin", "Yeşillik"];
-        plan.lunch = ["Köfte veya Et Sote (150g)", "Bulgur Pilavı (4 kaşık)", "Ayran"];
-        plan.snack = ["1 Muz", "1 Avuç Ceviz"];
-        plan.dinner = ["Balık Izgara", "Roka Salatası", "Mercimek Çorbası"];
+        plan.breakfast = ["Beyaz Peynirli Tost", "veya Simit + Ayran", "Domates/Salatalık"];
+        plan.lunch = ["Tavuklu/Köfteli Salata", "veya Ev Yemeği (Isıt-Ye)", "1 Kase Yoğurt"];
+        plan.snack = ["1 Muz", "Sütlü Kahve"];
+        plan.dinner = ["Kıymalı Makarna", "veya Tavuk Sote + Bulgur", "Mevsim Salatası"];
     } else {
-        plan.breakfast = ["3 Yumurtalı Omlet", "Yulaf Ezmesi (Sütlü)", "Muz ve Bal", "Ceviz"];
-        plan.lunch = ["Tavuklu Makarna", "Yoğurtlu Semizotu", "Mercimek Çorbası"];
-        plan.snack = ["Protein Bar veya Shake", "Kuruyemiş Karışımı"];
-        plan.dinner = ["Biftek veya Hindi", "Fırın Patates", "Bol Salata"];
+        plan.breakfast = ["3 Yumurtalı Omlet", "veya Büyük Karışık Tost", "Meyve Suyu"];
+        plan.lunch = ["Tavuk Pilav (Klasik)", "veya Büyük Boy Sandviç", "Ayran"];
+        plan.snack = ["Protein Bar", "Kuruyemiş Paketi", "Muz"];
+        plan.dinner = ["Etli Yemek (Biftek/Köfte)", "Makarna veya Pilav", "Bol Salata + Yoğurt"];
     }
 
     return plan;
